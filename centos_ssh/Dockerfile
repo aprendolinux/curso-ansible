@@ -2,7 +2,8 @@ FROM centos:8.3.2011
 
 
 RUN yum update -y && \
-    yum -y install python3 sudo \
+    yum -y install python3 sudo 
+RUN dnf -y update \
     && dnf -y install openssh-server
 
 RUN yum install -y passwd 
