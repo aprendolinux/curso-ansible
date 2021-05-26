@@ -1,4 +1,4 @@
-# curso-ansible
+# Repositorio para Curso Ansible
 Documentación para el curso de Ansible
 
 # Directorio Debian ssh
