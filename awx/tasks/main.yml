@@ -1,0 +1,29 @@
+---
+# tasks file for awx
+- include_vars: credentials.yml
+- name: Check file downloaded
+  stat:
+          path: /root/awx-17.1.0
+  register: awx_file
+
+- name: Download and unarchive awx file
+  unarchive:
+    src: https://github.com/ansible/awx/archive/refs/tags/17.1.0.zip
+    dest: /root
+    remote_src: yes
+  when: not awx_file.stat.exists
+
+- name: Replace admin user
+  lineinfile:
+          path: /root/awx-17.1.0/installer/inventory
+          regexp: '^admin_user'
+          line: admin_user={{ user_awx }}  
+
+- name: Replace admin pass
+  lineinfile:
+          path: /root/awx-17.1.0/installer/inventory
+          regexp: '^#admin_password'
+          line: admin_password={{ pass_awx }}  
+
+- name: Ansible installer
+  command: ansible-playbook -i /root/awx-17.1.0/installer/inventory  /root/awx-17.1.0/installer/install.yml

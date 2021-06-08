@@ -1,0 +1,58 @@
+---
+# tasks file for docker
+- name: Install prerequisites docker
+  apt:
+          name: '{{ package }}'
+          state: present
+
+  vars:
+          package:
+                  - apt-transport-https 
+                  - ca-certificates 
+                  - curl
+                  - gnupg 
+                  - lsb-release
+
+
+- name: Check keys docker
+  stat: 
+        path: /usr/share/keyrings/docker-archive-keyring.gpg
+  register: clave_docker
+
+- name: Script de keys
+  copy: 
+        dest: /root/docker_keys.sh
+        content:  curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        mode: 0711
+  when: not clave_docker.stat.exists
+ 
+- name: Ejecutar keys docker
+  command: sh /root/docker_keys.sh
+  when: not clave_docker.stat.exists
+
+- name: Add docker repo
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable"
+    state: present
+
+- name: Install docker
+  apt: 
+          name: '{{ package }}'
+          state: present
+          update_cache: yes
+
+  vars:
+          package:
+                  - docker-ce 
+                  - docker-ce-cli
+                  - containerd.io
+
+- name: Add user alumno to docker group
+  user:
+    name: alumno
+    groups: docker 
+    append: yes
+
+- name: Install docker-compose
+  pip: 
+        name: docker-compose

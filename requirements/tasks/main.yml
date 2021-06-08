@@ -1,0 +1,17 @@
+---
+# tasks file for requirements.yml
+- name: Install nodejs, git and pwgen
+  apt:
+          name: '{{ package }}'
+          state: present
+  vars:
+          package:
+                  - nodejs
+                  - npm
+                  - git
+                  - pwgen
+                  - zip
+
+- name: Configure npm
+  command: npm install npm --global
+
