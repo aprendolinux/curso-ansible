@@ -1,0 +1,14 @@
+---
+# tasks file for kubernetes
+- name: Deshabilita swap
+  include_tasks: swap.yml
+
+- name: Instalacion de docker
+  include_tasks: docker.yml
+
+- name: Instalacion kubernetes
+  include_tasks: kubernetes.yml
+
+- name: Init Kubernetes
+  include_tasks: init_kube.yml
+

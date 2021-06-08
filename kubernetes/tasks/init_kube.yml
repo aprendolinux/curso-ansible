@@ -1,0 +1,34 @@
+    - name: Comprobando si esta kubelet
+      shell: pidof kubelet 
+      register: salida
+      ignore_errors: yes
+      #failed_when: salida.rc != 1
+
+    - name: Falla cuando existe kubelet
+      fail:
+              msg: "Ya está el cluster iniciado, si quieres resetear: kubeadm reset"
+      when: salida.rc != 1
+
+    - name: Initialize the Kubernetes cluster using kubeadm
+      command: kubeadm init --node-name k8s-master --pod-network-cidr=192.168.200.0/16
+
+    
+    - name: Setup kubeconfig for lab user
+      command: "{{ item }}"
+      with_items:
+       - rm -fr /home/"{{ user }}"/.kube
+       - mkdir -p /home/"{{ user }}"/.kube
+       - cp -i /etc/kubernetes/admin.conf /home/"{{ user }}"/.kube/config
+       - chown "{{ user }}":"{{ user}}" /home/"{{ user }}"/.kube/config
+
+
+    - name: Install calico pod network
+      become: yes
+      become_user: "{{ user }}"
+      command: kubectl create -f   https://docs.projectcalico.org/manifests/calico.yaml
+
+
+    - name: Habilitar ejecuciones en master
+      become: yes
+      become_user: "{{ user }}"
+      command: kubectl taint nodes --all node-role.kubernetes.io/master-
