@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+        - name: Install some packages
+          become_user: root
+          become: true
+          apt:
+            pkg: "{{ item }}"
+            state: present
+          loop:
+            - vim
+            - python
+            - nmap
+            - curl

@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+        - name: Touch files with an optional mode
+          become_user: root
+          become: true
+          file:
+            dest: "{{ item }}"
+            state: touch
+          loop:
+            - /tmp/foo1
+            - /tmp/bar2
+            - /tmp/baz3
