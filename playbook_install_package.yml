@@ -6,10 +6,5 @@
           become_user: root
           become: true
           apt:
-            pkg: "{{ item }}"
+            pkg: "{{ paquete }}"
             state: present
-          loop:
-            - vim
-            - python
-            - nmap
-            - curl
